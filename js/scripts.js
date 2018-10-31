@@ -13,6 +13,10 @@ function Board() {
   this.gameOver = false; // reports if Sqaures have been marked play player
 }
 
+function Square() {
+  this.mark;
+}
+
 Board.prototype.build = function() {
   var maxSquares = 9;
 
@@ -21,25 +25,27 @@ Board.prototype.build = function() {
   }
 }
 
-function Square() {
-  this.mark;
-}
-
 Board.prototype.makeMove = function(activePlayer,toWhere) {
   this.activePlayer = activePlayer;
   this.toWhere = toWhere;
 
+  if (!this.gameOver) {
+    if (!this.allSquares[this.toWhere].mark) {
+      this.allSquares[this.toWhere].mark = this.activePlayer.symbol;
 
-  if (!this.allSquares[this.toWhere].mark) {
-    this.allSquares[this.toWhere].mark = this.activePlayer.symbol;
-    this.redraw();
+      this.redraw();
 
-    this.gameWon();
-    return "valid move"
+      this.gameWon();
 
+      return true
+    }
+    return false
   }
+  console.log("GAME OVER!");
+  // return
 
-  return "invalid move"
+
+
 
   // draw text-based tic-tac-toe
 
@@ -57,11 +63,27 @@ Board.prototype.gameWon = function() {
     var second = this.allSquares[combo[1]].mark;
     var third = this.allSquares[combo[2]].mark;
 
-    if (first  && second  && third) {
+    if ((first  && second  && third) && (first === second && second === third && first === third)) {
+
       console.log("match found! player ",this.allSquares[combo[0]].mark,"won!")
 
+      this.gameOver = true;
       return this.allSquares[combo[0]].mark
+
     }}).bind(this));
+}
+
+Board.prototype.draw = function() {
+  var isFull = false;
+
+  this.allSquares.forEach((function(isFull) {
+    if (!isFull.mark) {
+      console.log('all full!')
+    }
+
+  }).bind(this))
+
+  // console.log(this.allSquares)
 }
 
 Board.prototype.redraw = function() {
@@ -80,6 +102,8 @@ Board.prototype.redraw = function() {
 
   console.log(toeBoard)
 
+  this.draw();
+
 
 }
 
@@ -91,7 +115,17 @@ function Player(symbol, board) {
 
 Player.prototype.move = function(position) {
 
-  console.log(this.board.makeMove(this,position))
+  while ( this.board.makeMove(this,position) ) {
+    this.board.makeMove(this,position)
+  }
+
+
+
+  // if (this.board.makeMove(this,position)) {
+  //   this.board.makeMove(this,position)
+  // } else {console.log("INVALID MOVE")}
+
+  // this.board.makeMove(this,position)
   // tell the board where it's moving
 
 }
@@ -101,9 +135,18 @@ Player.prototype.move = function(position) {
 var game1 = new Game();
 
 
+game1.player1.move(0)
+game1.player2.move(1)
+
 game1.player1.move(2)
-game1.player1.move(4)
+game1.player2.move(4)
 
+game1.player1.move(3)
+game1.player2.move(5)
 
-game1.player1.move(6)
-game1.player1.move(4)
+game1.player1.move(7)
+game1.player2.move(6)
+
+game1.player1.move(8)
+game1.player1.move(8)
+game1.player1.move(8)
