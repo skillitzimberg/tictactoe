@@ -1,8 +1,6 @@
 
 
-var top = ["_","|","_","|","_"];
-var middle = ["_","|","_","|","_"];
-var bottom = [" ","|"," ","|"," "];
+
 
 function Game() {
   this.board = new Board()
@@ -27,17 +25,48 @@ Board.prototype.build = function() {
 }
 
 function Square() {
-  this.mark = null;
+  this.mark;
+}
+
+Board.prototype.makeMove = function(activePlayer,toWhere) {
+  this.activePlayer = activePlayer;
+  this.toWhere = toWhere;
+
+  this.allSquares[this.toWhere].mark = this.activePlayer.symbol;
+
+  this.redraw();
+
+}
+
+Board.prototype.redraw = function() {
+
+  // console.log(this.allSquares.length)
+
+  for(var i=0; i<this.allSquares.length; i++) {
+    if (this.allSquares[i].mark) {
+      console.log(i,"is occupied by",this.allSquares[i].mark)
+    }
+
+  }
+
+  var top = ["_","|","_","|","_"];
+  var middle = ["_","|","_","|","_"];
+  var bottom = [" ","|"," ","|"," "];
+
+  
+
+  console.log('ready to draw')
+
 }
 
 function Player(symbol, board) {
   this.symbol = symbol;
   this.board = board;
 
-  console.log("Player",symbol,"is playing on:",board)
 }
 
 Player.prototype.move = function(position) {
+  this.board.makeMove(this,position)
   // tell the board where it's moving
 
 }
@@ -45,3 +74,12 @@ Player.prototype.move = function(position) {
 
 // instantiate a new tic-tac-toe game below
 var game1 = new Game();
+
+
+game1.player2.move(3)
+game1.player2.move(1)
+game1.player1.move(0)
+
+game1.player2.move(2)
+
+console.log(game1.board.allSquares)
