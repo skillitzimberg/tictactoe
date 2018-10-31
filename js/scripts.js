@@ -1,7 +1,3 @@
-
-
-
-
 function Game() {
   this.board = new Board()
 
@@ -14,6 +10,7 @@ function Game() {
 function Board() {
   this.type = 'text';
   this.allSquares = [];
+  this.gameOver = false; // reports if Sqaures have been marked play player
 }
 
 Board.prototype.build = function() {
@@ -33,12 +30,38 @@ Board.prototype.makeMove = function(activePlayer,toWhere) {
   this.toWhere = toWhere;
 
 
+  if (!this.allSquares[this.toWhere].mark) {
+    this.allSquares[this.toWhere].mark = this.activePlayer.symbol;
+    this.redraw();
 
-  this.allSquares[this.toWhere].mark = this.activePlayer.symbol;
+    this.gameWon();
+    return "valid move"
+
+  }
+
+  return "invalid move"
 
   // draw text-based tic-tac-toe
-  this.redraw();
 
+}
+
+Board.prototype.gameWon = function() {
+  var winningCombos = [
+    [0,1,2],[3,4,5],[6,7,8], // horiz
+    [0,3,6],[1,4,7],[2,5,8], // verts
+    [0,4,8],[2,4,6] // diags
+  ];
+
+  winningCombos.forEach((function(combo,i) {
+    var first = this.allSquares[combo[0]].mark;
+    var second = this.allSquares[combo[1]].mark;
+    var third = this.allSquares[combo[2]].mark;
+
+    if (first  && second  && third) {
+      console.log("match found! player ",this.allSquares[combo[0]].mark,"won!")
+
+      return this.allSquares[combo[0]].mark
+    }}).bind(this));
 }
 
 Board.prototype.redraw = function() {
@@ -67,7 +90,8 @@ function Player(symbol, board) {
 }
 
 Player.prototype.move = function(position) {
-  this.board.makeMove(this,position)
+
+  console.log(this.board.makeMove(this,position))
   // tell the board where it's moving
 
 }
@@ -77,15 +101,9 @@ Player.prototype.move = function(position) {
 var game1 = new Game();
 
 
-game1.player2.move(3)
-game1.player1.move(0)
+game1.player1.move(2)
+game1.player1.move(4)
 
-game1.player2.move(1)
-game1.player1.move(8)
 
-game1.player2.move(2)
 game1.player1.move(6)
-
-
-
-// console.log(game1.board.allSquares)
+game1.player1.move(4)

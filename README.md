@@ -9,6 +9,11 @@
 
 ### Specifications:
 ##### Spec: :
+* Create text-only board
+* Add an 'X' in square
+* Add an 'O' in square
+* Record/report square location of marked squares
+* Puts players' mark in square if it hasn't been played
 
 ## Objectives
 
