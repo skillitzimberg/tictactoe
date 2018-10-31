@@ -3,8 +3,21 @@ function Game() {
 
   this.player1= new Player('X',this.board);
   this.player2= new Player('O',this.board);
+  this.active = this.player1;
 
   this.board.build();
+}
+
+Game.prototype.activePlayer = function(position) {
+
+  // call makeMove
+  // if make move == true
+  // activeplayer not current
+
+
+
+  console.log(position)
+
 }
 
 function Board() {
@@ -73,19 +86,6 @@ Board.prototype.gameWon = function() {
     }}).bind(this));
 }
 
-Board.prototype.draw = function() {
-  var isFull = false;
-
-  this.allSquares.forEach((function(isFull) {
-    if (!isFull.mark) {
-      console.log('all full!')
-    }
-
-  }).bind(this))
-
-  // console.log(this.allSquares)
-}
-
 Board.prototype.redraw = function() {
   // strictly for text-based game
   var ticTacToe = ["☐","☐","☐","☐","☐","☐","☐","☐","☐"];
@@ -102,9 +102,6 @@ Board.prototype.redraw = function() {
 
   console.log(toeBoard)
 
-  this.draw();
-
-
 }
 
 function Player(symbol, board) {
@@ -115,18 +112,10 @@ function Player(symbol, board) {
 
 Player.prototype.move = function(position) {
 
-  while ( this.board.makeMove(this,position) ) {
-    this.board.makeMove(this,position)
-  }
+  return this.board.makeMove(this,position)
 
+  // console.log( this.board.makeMove(this,position) )
 
-
-  // if (this.board.makeMove(this,position)) {
-  //   this.board.makeMove(this,position)
-  // } else {console.log("INVALID MOVE")}
-
-  // this.board.makeMove(this,position)
-  // tell the board where it's moving
 
 }
 
@@ -134,19 +123,15 @@ Player.prototype.move = function(position) {
 // instantiate a new tic-tac-toe game below
 var game1 = new Game();
 
+game1.activePlayer(1);
 
-game1.player1.move(0)
-game1.player2.move(1)
 
-game1.player1.move(2)
-game1.player2.move(4)
+// game1.player1.move(0)
 
-game1.player1.move(3)
-game1.player2.move(5)
 
-game1.player1.move(7)
-game1.player2.move(6)
-
-game1.player1.move(8)
-game1.player1.move(8)
-game1.player1.move(8)
+$(document).ready(function() {
+  $("table#board").on("click", "td", function() {
+    game1.player1.move(this.id)
+    console.log(this.id);
+  })
+})

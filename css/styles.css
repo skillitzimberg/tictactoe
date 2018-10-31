@@ -1,0 +1,20 @@
+table {
+  width:50%;
+  margin: auto;
+}
+
+td {
+  width: 33%;
+  height: 200px;
+
+}
+
+.horizontal {
+  border-top: 5px solid #333;
+  border-bottom: 5px solid #333;
+}
+
+.vertical {
+  border-left: 5px solid #333;
+  border-right: 5px solid #333;
+}
