@@ -32,30 +32,31 @@ Board.prototype.makeMove = function(activePlayer,toWhere) {
   this.activePlayer = activePlayer;
   this.toWhere = toWhere;
 
+
+
   this.allSquares[this.toWhere].mark = this.activePlayer.symbol;
 
+  // draw text-based tic-tac-toe
   this.redraw();
 
 }
 
 Board.prototype.redraw = function() {
+  // strictly for text-based game
+  var ticTacToe = ["☐","☐","☐","☐","☐","☐","☐","☐","☐"];
 
-  // console.log(this.allSquares.length)
 
   for(var i=0; i<this.allSquares.length; i++) {
     if (this.allSquares[i].mark) {
-      console.log(i,"is occupied by",this.allSquares[i].mark)
+      ticTacToe[i]=this.allSquares[i].mark
     }
 
   }
 
-  var top = ["_","|","_","|","_"];
-  var middle = ["_","|","_","|","_"];
-  var bottom = [" ","|"," ","|"," "];
+  var toeBoard = ticTacToe[0]+ticTacToe[1]+ticTacToe[2]+"\n"+ticTacToe[3]+ticTacToe[4]+ticTacToe[5]+"\n"+ticTacToe[6]+ticTacToe[7]+ticTacToe[8]
 
-  
+  console.log(toeBoard)
 
-  console.log('ready to draw')
 
 }
 
@@ -77,9 +78,14 @@ var game1 = new Game();
 
 
 game1.player2.move(3)
-game1.player2.move(1)
 game1.player1.move(0)
 
-game1.player2.move(2)
+game1.player2.move(1)
+game1.player1.move(8)
 
-console.log(game1.board.allSquares)
+game1.player2.move(2)
+game1.player1.move(6)
+
+
+
+// console.log(game1.board.allSquares)
