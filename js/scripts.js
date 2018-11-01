@@ -8,10 +8,15 @@ function Game() {
   this.board.build();
 }
 
-Game.prototype.turnHandler = function(position) {
-  // console.log(this.active.symbol, 'is in play. wants to move to: ',position)
-  if (this.active == this.player1) {
+Game.prototype.computer = function() {
+  return Math.floor(Math.random() * Math.floor(9));
+}
 
+Game.prototype.turnHandler = function(position) {
+
+
+  if (this.active == this.player1) {
+    // IF PLAYER1 HAS PLAYED, PLAYER2 MOVES
     if (this.board.makeMove(this.active, position)){
       this.active = this.player2;
 
@@ -20,6 +25,7 @@ Game.prototype.turnHandler = function(position) {
   }
 
   if (this.active == this.player2) {
+
     if (this.board.makeMove(this.active, position)){
       this.active = this.player1;
 
@@ -178,6 +184,17 @@ $(document).ready(function() {
 
   $("table#board").on("click", "td", function() {
     game1.turnHandler(this.id);
+
+    // console.log('computers')
+
+    console.log(game1.active)
+
+    if (game1.active.symbol==="O") {
+      var guess = Math.floor(Math.random() * Math.floor(9));
+      $("td#"+guess).click()
+
+      // console.log('computer',Math.floor(Math.random() * Math.floor(9)))
+    }
 
   })
 })
