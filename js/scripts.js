@@ -14,6 +14,7 @@ Game.prototype.computer = function() {
 
 Game.prototype.turnHandler = function(position) {
 
+  console.log(this.active)
 
   if (this.active == this.player1) {
     // IF PLAYER1 HAS PLAYED, PLAYER2 MOVES
@@ -42,6 +43,7 @@ function Board() {
   this.allSquares = [];
   this.movesMade = 0;
   this.gameOver = false; // reports if Sqaures have been marked play player
+  this.computerPlay = true;
 }
 
 Board.prototype.build = function() {
@@ -54,11 +56,13 @@ Board.prototype.build = function() {
 
 Board.prototype.makeMove = function(activePlayer, toWhere) {
 
+
   if (!this.gameOver) {
     if (!this.allSquares[toWhere].mark) {
       this.allSquares[toWhere].mark = activePlayer.symbol;
 
       this.movesMade++;
+
 
       this.guiDraw(activePlayer.symbol,toWhere)
 
@@ -101,6 +105,7 @@ Board.prototype.winChecker = function(activePlayer) {
 Board.prototype.guiDraw = function(symbol,toWhere) {
   $("#"+toWhere).text(symbol)
 
+
   if (symbol === 'X') {
     $("#p1, #p2").removeClass();
     $("#p2").addClass("active");
@@ -132,6 +137,8 @@ Board.prototype.enableButton = function() {
     this.resetBoard()
   }).bind(this))
 
+  console.log(this.computerPlay)
+
 
 }
 
@@ -154,7 +161,10 @@ Board.prototype.messenger = function(msg) {
     this.enableButton();
 
   }
-  return
+
+  else if (msg.type === "game_end")
+  this.gameOver = false;
+  // return
 }
 
 Board.prototype.redraw = function() {
@@ -184,16 +194,13 @@ $(document).ready(function() {
 
   $("table#board").on("click", "td", function() {
     game1.turnHandler(this.id);
-
     // console.log('computers')
-
-    console.log(game1.active)
+    // console.log(game1.active)
 
     if (game1.active.symbol==="O") {
       var guess = Math.floor(Math.random() * Math.floor(9));
-      $("td#"+guess).click()
+      $("#"+guess).click()
 
-      // console.log('computer',Math.floor(Math.random() * Math.floor(9)))
     }
 
   })
