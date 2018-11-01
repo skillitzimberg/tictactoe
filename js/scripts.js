@@ -9,17 +9,40 @@ function Game() {
 }
 
 Game.prototype.turnHandler = function(position) {
+  console.log(this.active.symbol, 'is in play. wants to move to: ',position)
+
 
   // This handles moves from the UI
 
+  if (this.active == this.player1) {
+
+    if (this.board.makeMove(this.active, position)){
+      $("#"+position).text(this.active.symbol)
+
+      this.active = this.player2;
+      return
+    }
+  }
+
+  if (this.active == this.player2) {
+    if (this.board.makeMove(this.active, position)){
+      $("#"+position).text(this.active.symbol)
+      
+      this.active = this.player1;
+
+      return
+    }
+
+  }
+
+  console.log('move made', this.active.symbol," is now active")
   // call makeMove
-  this.board.makeMove(this.active, position)
   // if make move == true
   // activeplayer not current
 
 
 
-  console.log(position)
+  // console.log(position)
 
 }
 
@@ -118,7 +141,7 @@ Player.prototype.move = function(position) {
 // instantiate a new tic-tac-toe game below
 var game1 = new Game();
 
-game1.activePlayer();
+
 
 
 // game1.player1.move(0)
@@ -126,7 +149,9 @@ game1.activePlayer();
 
 $(document).ready(function() {
   $("table#board").on("click", "td", function() {
-    game1.player1.move(this.id)
-    console.log(this.id);
+    game1.turnHandler(this.id);
+
+    // game1.player1.move(this.id)
+    // console.log(this.id);
   })
 })
