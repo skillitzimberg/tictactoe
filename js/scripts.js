@@ -5,12 +5,15 @@ function Game() {
   this.player2= new Player('O',this.board);
   this.active = this.player1;
 
-  this.board.build();
+  this.board.build(); // a method of BOARD used to create an array of SQUAREs - positions on board
 }
 
-Game.prototype.activePlayer = function(position) {
+Game.prototype.turnHandler = function(position) {
+
+  // This handles moves from the UI
 
   // call makeMove
+  this.board.makeMove(this.active, position)
   // if make move == true
   // activeplayer not current
 
@@ -20,14 +23,14 @@ Game.prototype.activePlayer = function(position) {
 
 }
 
+function Square() {
+  this.mark;
+}
+
 function Board() {
   this.type = 'text';
   this.allSquares = [];
   this.gameOver = false; // reports if Sqaures have been marked play player
-}
-
-function Square() {
-  this.mark;
 }
 
 Board.prototype.build = function() {
@@ -38,7 +41,7 @@ Board.prototype.build = function() {
   }
 }
 
-Board.prototype.makeMove = function(activePlayer,toWhere) {
+Board.prototype.makeMove = function(activePlayer, toWhere) {
   this.activePlayer = activePlayer;
   this.toWhere = toWhere;
 
@@ -55,13 +58,6 @@ Board.prototype.makeMove = function(activePlayer,toWhere) {
     return false
   }
   console.log("GAME OVER!");
-  // return
-
-
-
-
-  // draw text-based tic-tac-toe
-
 }
 
 Board.prototype.gameWon = function() {
@@ -71,14 +67,14 @@ Board.prototype.gameWon = function() {
     [0,4,8],[2,4,6] // diags
   ];
 
-  winningCombos.forEach((function(combo,i) {
+  winningCombos.forEach((function(combo, i) {
     var first = this.allSquares[combo[0]].mark;
     var second = this.allSquares[combo[1]].mark;
     var third = this.allSquares[combo[2]].mark;
 
     if ((first  && second  && third) && (first === second && second === third && first === third)) {
 
-      console.log("match found! player ",this.allSquares[combo[0]].mark,"won!")
+      console.log("match found! player ", this.allSquares[combo[0]].mark, "won!")
 
       this.gameOver = true;
       return this.allSquares[combo[0]].mark
@@ -112,18 +108,17 @@ function Player(symbol, board) {
 
 Player.prototype.move = function(position) {
 
-  return this.board.makeMove(this,position)
+  return this.board.makeMove(this, position)
 
   // console.log( this.board.makeMove(this,position) )
 
 
 }
 
-
 // instantiate a new tic-tac-toe game below
 var game1 = new Game();
 
-game1.activePlayer(1);
+game1.activePlayer();
 
 
 // game1.player1.move(0)
