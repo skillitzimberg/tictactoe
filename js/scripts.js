@@ -9,13 +9,10 @@ function Game() {
 }
 
 Game.prototype.turnHandler = function(position) {
-  console.log(this.active.symbol, 'is in play. wants to move to: ',position)
-
-
+  // console.log(this.active.symbol, 'is in play. wants to move to: ',position)
   if (this.active == this.player1) {
 
     if (this.board.makeMove(this.active, position)){
-
       this.active = this.player2;
       return
     }
@@ -49,19 +46,21 @@ Board.prototype.build = function() {
 }
 
 Board.prototype.makeMove = function(activePlayer, toWhere) {
+
   if (!this.gameOver) {
     if (!this.allSquares[toWhere].mark) {
       this.allSquares[toWhere].mark = activePlayer.symbol;
 
-      this.gameWon(activePlayer);
       this.guiDraw(activePlayer.symbol,toWhere)
+      this.gameWon(activePlayer);
+
 
       return true
     }
-    this.messenger({msg: 'invalid_move', board: this.allSquares, player: activePlayer});
+    this.messenger({type: 'invalid_move', board: this.allSquares, player: activePlayer});
     return false
   }
-  this.messenger({msg: 'game_end', board: this.allSquares, player: activePlayer});
+  this.messenger({type: 'game_end', board: this.allSquares, player: activePlayer});
 }
 
 Board.prototype.gameWon = function(activePlayer) {
@@ -79,7 +78,7 @@ Board.prototype.gameWon = function(activePlayer) {
     if ((first  && second  && third) && (first === second && second === third && first === third)) {
 
       this.gameOver = true;
-      this.messenger({msg: 'game_win', board: combo, player: activePlayer});
+      this.messenger({type: 'game_win', board: combo, player: activePlayer});
       // don't know why below was added—commenting out instead
       // return this.allSquares[combo[0]].mark
     }}).bind(this));
@@ -89,19 +88,59 @@ Board.prototype.guiDraw = function(symbol,toWhere) {
   $("#"+toWhere).text(symbol)
 
   if (symbol === 'X') {
-    $("#player1, #player2").removeClass();
-    $("#player2").addClass("active");
+    $("#p1, #p2").removeClass();
+    $("#p2").addClass("active");
   }
 
   if (symbol === 'O') {
-    $("#player1, #player2").removeClass();
-    $("#player1").addClass("active");
+    $("#p1, #p2").removeClass();
+    $("#p1").addClass("active");
   }
 
 }
 
+Board.prototype.resetBoard = function() {
+
+  this.allSquares = [];
+  this.gameOver = false;
+
+  this.build();
+
+
+  $("td").empty();
+  $(".game-status").hide();
+
+
+}
+
 Board.prototype.messenger = function(msg) {
-  console.log(msg)
+
+  // console.log(msg)
+
+
+  if (msg.type === "game_win") {
+    var id;
+
+    (msg.player.symbol === "X") ? (id = "p1") : (id = "p2")
+    msg.player.score++;
+    var output = msg.player.score;
+
+    $("#"+id+" span").text(output);
+    $(".game-status").show();
+
+    $("#restart").click((function() {
+      this.resetBoard()
+    }).bind(this))
+  }
+
+  if (msg.type === "invalid_move") {
+
+    console.log("bad move")
+    console.log(msg.board)
+  }
+
+
+  return
 }
 
 // Board.prototype.redraw = function() {
@@ -121,17 +160,20 @@ Board.prototype.messenger = function(msg) {
 function Player(symbol, board) {
   this.symbol = symbol;
   this.board = board;
+  this.score = 0;
 
 }
 
-Player.prototype.move = function(position) {
-  return this.board.makeMove(this, position)
-
-}
+// Player.prototype.move = function(position) {
+//   return this.board.makeMove(this, position)
+// }
 
 $(document).ready(function() {
   // instantiate a new tic-tac-toe game below
   var game1 = new Game();
+
+
+
   $("table#board").on("click", "td", function() {
     game1.turnHandler(this.id);
 
