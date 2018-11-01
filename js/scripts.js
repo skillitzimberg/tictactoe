@@ -14,6 +14,7 @@ Game.prototype.turnHandler = function(position) {
 
     if (this.board.makeMove(this.active, position)){
       this.active = this.player2;
+
       return
     }
   }
@@ -27,13 +28,13 @@ Game.prototype.turnHandler = function(position) {
   }
 }
 
-
 function Square() {
   this.mark;
 }
 
 function Board() {
   this.allSquares = [];
+  this.movesMade = 0;
   this.gameOver = false; // reports if Sqaures have been marked play player
 }
 
@@ -51,10 +52,14 @@ Board.prototype.makeMove = function(activePlayer, toWhere) {
     if (!this.allSquares[toWhere].mark) {
       this.allSquares[toWhere].mark = activePlayer.symbol;
 
+      this.movesMade++;
+
       this.guiDraw(activePlayer.symbol,toWhere)
-      this.gameWon(activePlayer);
 
+      // this.redraw(); text-based UI rendering
+      this.winChecker(activePlayer);
 
+      if  (this.movesMade === 9 && !this.gameOver) {this.messenger({type: 'draw'});}
       return true
     }
     this.messenger({type: 'invalid_move', board: this.allSquares, player: activePlayer});
@@ -63,11 +68,12 @@ Board.prototype.makeMove = function(activePlayer, toWhere) {
   this.messenger({type: 'game_end', board: this.allSquares, player: activePlayer});
 }
 
-Board.prototype.gameWon = function(activePlayer) {
+Board.prototype.winChecker = function(activePlayer) {
+  var testArray;
   var winningCombos = [
-    [0,1,2],[3,4,5],[6,7,8], // horiz
-    [0,3,6],[1,4,7],[2,5,8], // verts
-    [0,4,8],[2,4,6] // diags
+    [0,1,2],[3,4,5],[6,7,8],  // horiz
+    [0,3,6],[1,4,7],[2,5,8],  // verts
+    [0,4,8],[2,4,6]           // diags
   ];
 
   winningCombos.forEach((function(combo, i) {
@@ -76,12 +82,14 @@ Board.prototype.gameWon = function(activePlayer) {
     var third = this.allSquares[combo[2]].mark;
 
     if ((first  && second  && third) && (first === second && second === third && first === third)) {
-
       this.gameOver = true;
       this.messenger({type: 'game_win', board: combo, player: activePlayer});
+
       // don't know why below was added—commenting out instead
       // return this.allSquares[combo[0]].mark
-    }}).bind(this));
+    }
+  }).bind(this));
+
 }
 
 Board.prototype.guiDraw = function(symbol,toWhere) {
@@ -103,59 +111,59 @@ Board.prototype.resetBoard = function() {
 
   this.allSquares = [];
   this.gameOver = false;
+  this.movesMade = 0;
 
   this.build();
 
-
   $("td").empty();
   $(".game-status").hide();
+}
+
+Board.prototype.enableButton = function() {
+  $(".game-status").show();
+
+  $("#restart").click((function() {
+    this.resetBoard()
+  }).bind(this))
 
 
 }
 
 Board.prototype.messenger = function(msg) {
+  console.log(msg.type);
 
-  // console.log(msg)
-
+  var id;
 
   if (msg.type === "game_win") {
-    var id;
-
-    (msg.player.symbol === "X") ? (id = "p1") : (id = "p2")
+    msg.player.symbol === "X" ? (id = "p1") : (id = "p2");
     msg.player.score++;
+
     var output = msg.player.score;
-
     $("#"+id+" span").text(output);
-    $(".game-status").show();
 
-    $("#restart").click((function() {
-      this.resetBoard()
-    }).bind(this))
+    this.enableButton();
   }
 
-  if (msg.type === "invalid_move") {
+  else if (msg.type === "draw") {
+    this.enableButton();
 
-    console.log("bad move")
-    console.log(msg.board)
   }
-
-
   return
 }
 
-// Board.prototype.redraw = function() {
-//   // text-based game
-//   var ticTacToe = ["☐","☐","☐","☐","☐","☐","☐","☐","☐"];
-//
-//   for(var i=0; i<this.allSquares.length; i++) {
-//     if (this.allSquares[i].mark) {
-//       ticTacToe[i]=this.allSquares[i].mark;
-//     }
-//
-//   }
-//   var toeBoard = ticTacToe[0]+ticTacToe[1]+ticTacToe[2]+"\n"+ticTacToe[3]+ticTacToe[4]+ticTacToe[5]+"\n"+ticTacToe[6]+ticTacToe[7]+ticTacToe[8];
-//   console.log(toeBoard);
-// }
+Board.prototype.redraw = function() {
+  // text-based game
+  var ticTacToe = ["☐","☐","☐","☐","☐","☐","☐","☐","☐"];
+
+  for(var i=0; i<this.allSquares.length; i++) {
+    if (this.allSquares[i].mark) {
+      ticTacToe[i]=this.allSquares[i].mark;
+    }
+
+  }
+  var toeBoard = ticTacToe[0]+ticTacToe[1]+ticTacToe[2]+"\n"+ticTacToe[3]+ticTacToe[4]+ticTacToe[5]+"\n"+ticTacToe[6]+ticTacToe[7]+ticTacToe[8];
+  console.log(toeBoard);
+}
 
 function Player(symbol, board) {
   this.symbol = symbol;
@@ -164,20 +172,12 @@ function Player(symbol, board) {
 
 }
 
-// Player.prototype.move = function(position) {
-//   return this.board.makeMove(this, position)
-// }
-
 $(document).ready(function() {
   // instantiate a new tic-tac-toe game below
   var game1 = new Game();
 
-
-
   $("table#board").on("click", "td", function() {
     game1.turnHandler(this.id);
 
-    // game1.player1.move(this.id)
-    // console.log(this.id);
   })
 })
